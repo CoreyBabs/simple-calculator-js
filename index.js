@@ -36,6 +36,9 @@ function addToDisplay(txt) {
 }
 
 function removeFromDisplay() {
+	// eq and err displays cannot be deleted
+	if (lastDisplayMode === "eq" || lastDisplayMode === "err") return;
+
 	let idx = -1;
 
 	// if a space is detected, that means we need to delete an op which has whitespace
@@ -68,6 +71,8 @@ function calculate() {
 		return;
 	}
 
+	lastDisplayMode = "eq";
+
 	let isFirst = true;
 	let total = 0;
 	while (vals.length > 0) {
@@ -84,11 +89,16 @@ function calculate() {
 			if (second === undefined) break;
 			total = operate(total, second, op);
 		}
+
+		// there was an error so break
+		if (typeof total === "string") {
+			lastDisplayMode = "err";
+			break;
+		}
 	}
 
 	displayValue = total;
 	updateDisplay();
-	lastDisplayMode = "eq";
 }
 
 let displayValue = "";
@@ -96,8 +106,8 @@ let lastDisplayMode = "None";
 
 let numbers = document.querySelectorAll(".number");
 numbers.forEach(n => n.addEventListener("click", (e) => { 
-	// if last button press was eq, start new calculation
-	if (lastDisplayMode === "eq") displayValue = "";
+	// if last button press was eq or error, start new calculation
+	if (lastDisplayMode === "eq" || lastDisplayMode === "err") displayValue = "";
 
 	addToDisplay(e.target.textContent);
 	lastDisplayMode = "num";
@@ -105,7 +115,7 @@ numbers.forEach(n => n.addEventListener("click", (e) => {
 
 let ops = document.querySelectorAll(".op");
 ops.forEach(o => o.addEventListener("click", (e) => {
-	if (lastDisplayMode !== "op") {
+	if (lastDisplayMode !== "op" && lastDisplayMode !== "err") {
 		// if first button press is an op, add a 0 value
 		if (displayValue.length === 0) displayValue = "0";	
 
