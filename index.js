@@ -56,14 +56,49 @@ function clearDisplay() {
 	updateDisplay();
 }
 
-let firstValue = null;
-let secondValue = null;
-let operator = null;
+function calculate() {
+	let vals = displayValue.split(" ").reverse();	
+	// if only one value is present, we have nothing to calculate so return
+	if (vals.length === 1) return;
+
+	// if we have a value and an op but no second value, return the first value
+	if (vals.length === 2) {
+		displayValue = vals[0];
+		updateDisplay();
+		return;
+	}
+
+	let isFirst = true;
+	let total = 0;
+	while (vals.length > 0) {
+		if (isFirst) {
+			let first = +vals.pop();
+			let op = vals.pop();
+			let second = +vals.pop();
+			total =	operate(first, second, op);
+			isFirst = false;
+		}
+		else {
+			let op = vals.pop();
+			let second = +vals.pop();
+			if (second === undefined) break;
+			total = operate(total, second, op);
+		}
+	}
+
+	displayValue = total;
+	updateDisplay();
+	lastDisplayMode = "eq";
+}
+
 let displayValue = "";
 let lastDisplayMode = "None";
 
 let numbers = document.querySelectorAll(".number");
 numbers.forEach(n => n.addEventListener("click", (e) => { 
+	// if last button press was eq, start new calculation
+	if (lastDisplayMode === "eq") displayValue = "";
+
 	addToDisplay(e.target.textContent);
 	lastDisplayMode = "num";
 }));
@@ -71,6 +106,9 @@ numbers.forEach(n => n.addEventListener("click", (e) => {
 let ops = document.querySelectorAll(".op");
 ops.forEach(o => o.addEventListener("click", (e) => {
 	if (lastDisplayMode !== "op") {
+		// if first button press is an op, add a 0 value
+		if (displayValue.length === 0) displayValue = "0";	
+
 		addToDisplay(` ${e.target.textContent} `);
 		lastDisplayMode = "op";
 	}
@@ -81,3 +119,6 @@ clear.addEventListener("click", clearDisplay);
 
 let del = document.querySelector("#delete");
 del.addEventListener("click", removeFromDisplay);
+
+let eq = document.querySelector("#equals");
+eq.addEventListener("click", calculate);
