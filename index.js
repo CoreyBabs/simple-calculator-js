@@ -57,7 +57,7 @@ let secondValue = null;
 let operator = null;
 let lastDisplayMode = "None";
 
-let numbers = document.querySelectorAll("#numbers");
+let numbers = document.querySelectorAll(".number");
 numbers.forEach(n => n.addEventListener("click", (e) => { 
 	addToDisplay(e.target.textContent);
 	lastDisplayMode = "num";
