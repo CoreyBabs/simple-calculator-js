@@ -26,17 +26,20 @@ function operate(a, b, op) {
 	}
 }
 
-function addToDisplay(txt) {
+function updateDisplay() {
 	let display = document.querySelector("#display");
-	display.textContent += txt;
+	display.textContent = displayValue;
+}
+function addToDisplay(txt) {
+	displayValue += txt;
+	updateDisplay();
 }
 
 function removeFromDisplay() {
-	let display = document.querySelector("#display");
 	let idx = -1;
 
 	// if a space is detected, that means we need to delete an op which has whitespace
-	if (display.textContent.slice(-1) === " ") lastDisplayMode = "op";
+	if (displayValue.slice(-1) === " ") lastDisplayMode = "op";
 
 	// operators are surrouned by a space so include that in the delete.
 	if (lastDisplayMode === "op") {
@@ -44,17 +47,19 @@ function removeFromDisplay() {
 		lastDisplayMode = "num";
 	}
 
-	display.textContent = display.textContent.slice(0, idx);
+	displayValue = displayValue.slice(0, idx);
+	updateDisplay();
 }
 
 function clearDisplay() {
-	let display = document.querySelector("#display");
-	display.textContent = "";
+	displayValue = "";
+	updateDisplay();
 }
 
 let firstValue = null;
 let secondValue = null;
 let operator = null;
+let displayValue = "";
 let lastDisplayMode = "None";
 
 let numbers = document.querySelectorAll(".number");
