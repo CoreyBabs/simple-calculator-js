@@ -60,7 +60,7 @@ function clearDisplay() {
 }
 
 function calculate() {
-	let vals = displayValue.split(" ").reverse();	
+	let vals = displayValue.trim().split(" ").reverse();	
 	// if only one value is present, we have nothing to calculate so return
 	if (vals.length === 1) return;
 
@@ -86,7 +86,7 @@ function calculate() {
 		else {
 			let op = vals.pop();
 			let second = +vals.pop();
-			if (second === undefined) break;
+			if (isNaN(second)) break;
 			total = operate(total, second, op);
 		}
 
