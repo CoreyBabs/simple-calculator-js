@@ -73,28 +73,28 @@ function calculate() {
 
 	lastDisplayMode = "eq";
 
-	let isFirst = true;
-	let total = 0;
-	while (vals.length > 0) {
-		if (isFirst) {
-			let first = +vals.pop();
-			let op = vals.pop();
-			let second = +vals.pop();
-			total =	operate(first, second, op);
-			isFirst = false;
-		}
-		else {
-			let op = vals.pop();
-			let second = +vals.pop();
-			if (isNaN(second)) break;
-			total = operate(total, second, op);
-		}
+	// run first calculation
+	let first = +vals.pop();
+	let op = vals.pop();
+	let second = +vals.pop();
+	let	total =	operate(first, second, op);
 
-		// there was an error so break
+	// there was an error so set to error mode
+	if (typeof total === "string") {
+		lastDisplayMode = "err";
+	}
+
+	// there are more calculations to do if vals still has values in it	
+	while (vals.length > 0) {
+		// there was an error so set to error mode
 		if (typeof total === "string") {
 			lastDisplayMode = "err";
-			break;
 		}
+
+		let op = vals.pop();
+		let second = +vals.pop();
+		if (isNaN(second)) break;
+		total = operate(total, second, op);
 	}
 
 	displayValue = total;
