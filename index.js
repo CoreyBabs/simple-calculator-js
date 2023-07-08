@@ -44,6 +44,9 @@ function removeFromDisplay() {
 	// if a space is detected, that means we need to delete an op which has whitespace
 	if (displayValue.slice(-1) === " ") lastDisplayMode = "op";
 
+	// if a decimal is deleted, a new one can be added
+	if (displayValue.slice(-1) === ".") hasDecimal = false;
+
 	// operators are surrouned by a space so include that in the delete.
 	if (lastDisplayMode === "op") {
 		idx = -3;
@@ -57,6 +60,7 @@ function removeFromDisplay() {
 function clearDisplay() {
 	displayValue = "";
 	updateDisplay();
+	hasDecimal = false;
 }
 
 function calculate() {
@@ -103,6 +107,7 @@ function calculate() {
 
 let displayValue = "";
 let lastDisplayMode = "None";
+let hasDecimal = false;
 
 let numbers = document.querySelectorAll(".number");
 numbers.forEach(n => n.addEventListener("click", (e) => { 
@@ -121,6 +126,7 @@ ops.forEach(o => o.addEventListener("click", (e) => {
 
 		addToDisplay(` ${e.target.textContent} `);
 		lastDisplayMode = "op";
+		hasDecimal = false; // reset decimal
 	}
 }));
 
@@ -132,3 +138,13 @@ del.addEventListener("click", removeFromDisplay);
 
 let eq = document.querySelector("#equals");
 eq.addEventListener("click", calculate);
+
+// Known bug in corner case: if you have a decimal number and delete an op, you can add a second decimal to a number
+let decimal = document.querySelector("#decimal");
+decimal.addEventListener("click", () => {
+	// only allow decimal in number mode and if there is no decimal already
+	if (!hasDecimal && (lastDisplayMode === "num" || lastDisplayMode === "op")) {
+		addToDisplay(".");
+		hasDecimal = true;
+	}
+})
